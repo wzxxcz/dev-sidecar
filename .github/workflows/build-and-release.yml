@@ -138,7 +138,12 @@ jobs:
           echo "======================================================================";
           echo "npm run electron:build";
           echo "--------------------";
-          npm run electron:build;
+          # 👇 👇 👇 【唯一修复】Windows 强制打包 --win，其他系统正常运行
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            npm run electron:build -- --win
+          else
+            npm run electron:build
+          fi;
 
       - name: 'Print dir "packages/gui/dist_electron/"'
         run: |
