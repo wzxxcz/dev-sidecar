@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
-          cache: pnpm
+          cache: 'pnpm'
 
       - name: "Setup Python environment, because of electron-builder install-app-deps requires Python setup tools"
         uses: actions/setup-python@v5
@@ -83,24 +83,24 @@ jobs:
       - name: "Setup electron cache"
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.cache/electron
-          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ env.ELECTRON_CACHE }}
+          key: ${{ runner.os }}-electron-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-electron-cache-
+            ${{ runner.os }}-electron-
 
       - name: "Setup electron-builder cache"
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.cache/electron-builder
-          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ env.ELECTRON_BUILDER_CACHE }}
+          key: ${{ runner.os }}-electron-builder-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-electron-builder-cache-
+            ${{ runner.os }}-electron-builder-
 
       - name: "Set C++17 compiler flags (Linux / macOS)"
         if: ${{ matrix.os != 'windows' }}
         run: |
           echo "CXXFLAGS=-std=c++17" >> $GITHUB_ENV
-          echo "CFLAGS=-std=c11" >> $GITHUB_ENV
+          echo "CFLAGS=-std=c++17" >> $GITHUB_ENV
 
       - name: "Set C++17 compiler flags (Windows)"
         if: ${{ matrix.os == 'windows' }}
@@ -149,7 +149,7 @@ jobs:
           dir || ls -lah;
 
       # ==============================================
-      # ✅ 我修改的位置：下面这段 Windows 重命名 已注释
+      # ✅ Windows rename artifacts (已注释，保留原代码)
       # ==============================================
       # Rename artifacts
       # - name: "Rename artifacts - Windows"
@@ -493,7 +493,7 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
+      - name: "Download DevSidecar-${{ steps.package.outputs.version }}-macos-universal.dmg"
         uses: actions/download-artifact@v4.1.8
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
