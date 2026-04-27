@@ -128,21 +128,22 @@ jobs:
           pnpm run test;
 
       # ==============================================
-      # ✅ 新增：为 Windows 配置多架构构建
+      # ✅ 修复：Windows PowerShell兼容的多架构配置
       # ==============================================
       - name: "Configure Windows multi-arch build"
         if: ${{ matrix.os == 'windows' }}
         run: |
           echo "Configuring electron-builder for multi-architecture Windows build..."
-          # 创建临时的 electron-builder 配置
-          cat > packages/gui/electron-builder.temp.yml << EOF
-          win:
-            target: nsis
-            arch:
-              - x64
-              - ia32
-              - arm64
-          EOF
+          # PowerShell兼容的写法
+          $config = @"
+win:
+  target: nsis
+  arch:
+    - x64
+    - ia32
+    - arm64
+"@
+          Set-Content -Path packages/gui/electron-builder.temp.yml -Value $config
           echo "Temporary config created:"
           cat packages/gui/electron-builder.temp.yml
 
