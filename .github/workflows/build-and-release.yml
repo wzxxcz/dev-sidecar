@@ -128,26 +128,24 @@ jobs:
           pnpm run test;
 
       # ==============================================
-      # ✅ 修复：Windows PowerShell兼容的多架构配置
+      # ✅ 新增：为 Windows 配置多架构构建
       # ==============================================
       - name: "Configure Windows multi-arch build"
         if: ${{ matrix.os == 'windows' }}
+        shell: powershell
         run: |
-          echo "Configuring electron-builder for multi-architecture Windows build..."
-          # PowerShell兼容的写法
-          $config = @"
-win:
-  target: nsis
-  arch:
-    - x64
-    - ia32
-    - arm64
-"@
-          Set-Content -Path packages/gui/electron-builder.temp.yml -Value $config
-          echo "Temporary config created:"
-          cat packages/gui/electron-builder.temp.yml
+          cd packages/gui
+          New-Item -Path . -Name "electron-builder.temp.yml" -ItemType "file" -Value @"
+          win:
+            target: nsis
+            arch:
+              - x64
+              - ia32
+              - arm64
+          "@
 
       - name: "npm run electron:build"
+        shell: pwsh
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
@@ -158,12 +156,12 @@ win:
           echo "======================================================================";
           echo "npm run electron:build";
           echo "--------------------";
-          # 👇 👇 👇 【修复】Windows 强制打包所有架构
-          if [ "${{ matrix.os }}" = "windows" ]; then
+          # 👇 👇 👇 【修复】Windows 强制打包所有架构（仅修复语法，不改动逻辑）
+          if ('${{ matrix.os }}' -eq 'windows') {
             npm run electron:build -- --win --config electron-builder.temp.yml
-          else
+          } else {
             npm run electron:build
-          fi;
+          }
 
       - name: 'Print dir "packages/gui/dist_electron/"'
         run: |
@@ -178,6 +176,7 @@ win:
       # ==============================================
       - name: "Rename artifacts - Windows"
         if: ${{ matrix.os == 'windows' }}
+        shell: powershell
         run: |
           cd packages/gui/dist_electron;
           echo "开始重命名 Windows 文件...";
