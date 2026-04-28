@@ -23,7 +23,7 @@ const defaultConfig = {
     remoteConfig: {
       enabled: true,
       // 共享远程配置地址
-      url: 'https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/remote_config.json',
+      url: 'https://gitee.com/wzbdyr/dev-sidecar-config/raw/main/remote_config20260426.json',
       // 个人远程配置地址
       personalUrl: 'https://gitee.com/wzbdyr/dev-sidecar-config/raw/main/ds-config.json',
     },
@@ -462,7 +462,6 @@ const defaultConfig = {
     ],
   },
 }
-
 // 从本地文件中加载配置
 defaultConfig.configFromFiles = configLoader.getConfigFromFiles(configLoader.getUserConfig(), defaultConfig)
 
